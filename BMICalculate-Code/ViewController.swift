@@ -17,8 +17,20 @@ class ViewController: UIViewController {
         return background
     }()
     
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Hello"
+        label.font = .systemFont(ofSize: 40, weight: .bold)
+        label.textColor = .darkGray
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
     //MARK: - Stack
-    private lazy var stackView = UIStackView()
+    private lazy var mainStackView = UIStackView()
     
     //MARK: - Life Cycle
     override func viewDidLoad() {
@@ -28,13 +40,20 @@ class ViewController: UIViewController {
     }
     
     private func setViews() {
-        stackView = UIStackView(
+        mainStackView = UIStackView(
             axis: .horizontal,
             distribution: .fillProportionally,
-            subView: [])
+            subView: [titleLabel]
+        )
+        
         view.addSubview(backgroundView)
+        view.addSubview(mainStackView)
+        titleLabel.text = "CALCULATE YOU BMI"
+    
+        
     }
 }
+
 
 extension ViewController {
     private func setupConstrains() {
@@ -42,7 +61,12 @@ extension ViewController {
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            backgroundView.topAnchor.constraint(equalTo: view.topAnchor)
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            
+            mainStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            mainStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
 }
@@ -56,3 +80,4 @@ extension UIStackView {
         self.translatesAutoresizingMaskIntoConstraints = false
     }
 }
+
