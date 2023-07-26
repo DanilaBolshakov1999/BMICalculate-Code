@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CalculateViewController: UIViewController {
     
     //MARK: - UI
     private lazy var backgroundView: UIImageView = {
@@ -28,16 +28,7 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private lazy var calculateButton: UIButton = {
-        let calculate = UIButton(type: .system)
-        calculate.tintColor = .white
-        calculate.backgroundColor = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 1.0)
-        calculate.layer.cornerRadius = 10
-        calculate.titleLabel?.font = .systemFont(ofSize: 20)
-        calculate.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        calculate.translatesAutoresizingMaskIntoConstraints = false
-        return calculate
-    }()
+    private lazy var calculateButton = UIButton(isBackgroundWhite: false)
     
     //MARK: - Stack
     private lazy var mainStackView = UIStackView()
@@ -50,7 +41,7 @@ class ViewController: UIViewController {
     private lazy var weightStackView = UIStackView()
     private lazy var weightTitleView = UILabel(textAlignment: .left)
     private lazy var weightNumberView = UILabel(textAlignment: .right)
-    private lazy var weightSlider = UISlider(maxValue: 300)
+    private lazy var weightSlider = UISlider(maxValue: 3)
     
     //MARK: - Life Cycle
     override func viewDidLoad() {
@@ -95,18 +86,17 @@ class ViewController: UIViewController {
         weightTitleView.text = "Wight"
         weightNumberView.text = "100 kg"
         
-        calculateButton.setTitle("CALCULATE", for: .normal)
+        calculateButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         
         
     }
     @objc func buttonTapped() {
-        print("Tap-tap")
+        let resultVC = ResultViewController()
+        present(resultVC, animated: true)
     }
-    
 }
 
-
-extension ViewController {
+extension CalculateViewController {
     private func setupConstrains() {
         NSLayoutConstraint.activate([
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -158,6 +148,21 @@ extension UISlider {
         self.value = maxValue / 2
         self.thumbTintColor = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 0.5)
         self.minimumTrackTintColor = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 0.5)
+        self.translatesAutoresizingMaskIntoConstraints = false
+    }
+}
+
+extension UIButton {
+    convenience init(isBackgroundWhite: Bool) {
+        self.init(type: .system)
+        let color = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 1.0)
+        let text = isBackgroundWhite ? "RECALCULATE" : "CALCULATE"
+        
+        self.tintColor = isBackgroundWhite ? color : .white
+        self.backgroundColor = isBackgroundWhite ? .white : color
+        self.layer.cornerRadius = 10
+        self.titleLabel?.font = .systemFont(ofSize: 20)
+        self.setTitle(text, for: .normal)
         self.translatesAutoresizingMaskIntoConstraints = false
     }
 }
