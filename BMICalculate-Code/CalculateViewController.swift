@@ -34,14 +34,18 @@ class CalculateViewController: UIViewController {
     private lazy var mainStackView = UIStackView()
     
     private lazy var heightStackView = UIStackView()
-    private lazy var heightTitleView = UILabel(textAlignment: .left)
-    private lazy var heightNumberView = UILabel(textAlignment: .right)
+    private lazy var heightTitleLabel = UILabel(textAlignment: .left)
+    private lazy var heightNumberLabel = UILabel(textAlignment: .right)
     private lazy var heighSlider = UISlider(maxValue: 3)
     
     private lazy var weightStackView = UIStackView()
-    private lazy var weightTitleView = UILabel(textAlignment: .left)
-    private lazy var weightNumberView = UILabel(textAlignment: .right)
-    private lazy var weightSlider = UISlider(maxValue: 3)
+    private lazy var weightTitleLabel = UILabel(textAlignment: .left)
+    private lazy var weightNumberLabel = UILabel(textAlignment: .right)
+    private lazy var weightSlider = UISlider(maxValue: 300)
+    
+    //MARK: - Private Properties
+    var calculatorBrain = CalculateBrain()
+    
     
     //MARK: - Life Cycle
     override func viewDidLoad() {
@@ -53,15 +57,17 @@ class CalculateViewController: UIViewController {
     //MARK: - setViews()
     private func setViews() {
         
+        
+        
         heightStackView = UIStackView(
             axis: .horizontal,
             distribution: .fillEqually,
-            subView: [heightTitleView, heightNumberView])
+            subView: [heightTitleLabel, heightNumberLabel])
         
         weightStackView = UIStackView(
             axis: .horizontal,
             distribution: .fillEqually,
-            subView: [weightTitleView, weightNumberView])
+            subView: [weightTitleLabel, weightNumberLabel])
         
         mainStackView = UIStackView(
             axis: .vertical,
@@ -80,18 +86,41 @@ class CalculateViewController: UIViewController {
         
         titleLabel.text = "CALCULATE YOU BMI"
         
-        heightTitleView.text = "Hight"
-        heightNumberView.text = "1.5 m"
+        heightTitleLabel.text = "Hight"
+        heightNumberLabel.text = "1.5 m"
         
-        weightTitleView.text = "Wight"
-        weightNumberView.text = "100 kg"
+        weightTitleLabel.text = "Wight"
+        weightNumberLabel.text = "100 kg"
         
-        calculateButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        calculateButton.addTarget(self, action: #selector(calculateButtonTapped), for: .touchUpInside)
         
-        
+        heighSlider.addTarget(self, action: #selector(heightSliderChange), for: .valueChanged)
+        weightSlider.addTarget(self, action: #selector(weightSliderChange), for: .valueChanged)
     }
-    @objc func buttonTapped() {
+    
+    @objc private func heightSliderChange(_ sender: UISlider) {
+        heightNumberLabel.text = String(format: "%.2f", sender.value) + "m"
+    }
+    
+    @objc private func weightSliderChange(_ sender: UISlider) {
+        weightNumberLabel.text = String(format: "%.1f", sender.value) + "Kg"
+    }
+    
+    @objc func calculateButtonTapped() {
+        
+        let height = heighSlider.value
+        let weight = weightSlider.value
+
+        calculatorBrain.calculateBMI(height: height, weight: weight)
+        
         let resultVC = ResultViewController()
+        resultVC.modalTransitionStyle = .flipHorizontal
+        resultVC.modalPresentationStyle = .fullScreen
+        
+        resultVC.bmiValue = calculatorBrain.getBMIValue()
+        resultVC.advice = calculatorBrain.getAdvice()
+        resultVC.color = calculatorBrain.getColor()
+    
         present(resultVC, animated: true)
     }
 }
@@ -117,52 +146,5 @@ extension CalculateViewController {
             
             calculateButton.heightAnchor.constraint(equalToConstant: 51)
         ])
-    }
-}
-
-extension UIStackView {
-    convenience init(axis: NSLayoutConstraint.Axis, distribution: UIStackView.Distribution, subView: [UIView] ) {
-        self.init(arrangedSubviews: subView)
-        self.axis = axis
-        self.distribution = distribution
-        self.spacing = 0
-        self.translatesAutoresizingMaskIntoConstraints = false
-    }
-}
-
-extension UILabel {
-    convenience init(textAlignment: NSTextAlignment) {
-        self.init()
-        self.textAlignment = textAlignment
-        self.font = .systemFont(ofSize: 17, weight: .light)
-        self.text = text
-        self.textColor = textColor
-        self.translatesAutoresizingMaskIntoConstraints = false
-    }
-}
-
-extension UISlider {
-    convenience init(maxValue: Float) {
-        self.init()
-        self.maximumValue = 3
-        self.value = maxValue / 2
-        self.thumbTintColor = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 0.5)
-        self.minimumTrackTintColor = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 0.5)
-        self.translatesAutoresizingMaskIntoConstraints = false
-    }
-}
-
-extension UIButton {
-    convenience init(isBackgroundWhite: Bool) {
-        self.init(type: .system)
-        let color = UIColor(red: 0.45, green: 0.45, blue: 0.82, alpha: 1.0)
-        let text = isBackgroundWhite ? "RECALCULATE" : "CALCULATE"
-        
-        self.tintColor = isBackgroundWhite ? color : .white
-        self.backgroundColor = isBackgroundWhite ? .white : color
-        self.layer.cornerRadius = 10
-        self.titleLabel?.font = .systemFont(ofSize: 20)
-        self.setTitle(text, for: .normal)
-        self.translatesAutoresizingMaskIntoConstraints = false
     }
 }

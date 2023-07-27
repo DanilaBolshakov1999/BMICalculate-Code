@@ -2,10 +2,9 @@
 //  ResultViewController.swift
 //  BMICalculate-Code
 //
-//  Created by IOS - Developer  on 26.07.2023.
+//  Created by Danila Bolshakov  on 26.07.2023.
 //
 
-import Foundation
 import UIKit
 
 class ResultViewController: UIViewController {
@@ -51,21 +50,27 @@ class ResultViewController: UIViewController {
         return label
     }()
     
-    private lazy var recalculateButton = UIButton(isBackgroundWhite: true)
-    
-    //MARK: - Stack
-    private lazy var mainStackView = UIStackView()
+    private var mainStackView = UIStackView()
+    private var recalculateButton = UIButton(isBackgroundWhite: true)
+
+    //MARK: - Public Properties
+    var bmiValue: String?
+    var advice: String?
+    var color: UIColor?
     
     //MARK: - Life Cycle
     override func loadView() {
         super.loadView()
-        view.backgroundColor = .blue
         setViews()
         setupConstrains()
     }
     
     //MARK: - setViews()
     private func setViews() {
+        
+        titleLabel.text = bmiValue
+        descrLabel.text = advice
+        view.backgroundColor = color
         
         mainStackView = UIStackView(
             axis: .vertical,
@@ -88,7 +93,7 @@ class ResultViewController: UIViewController {
         
     }
     @objc private func recalculateButtonTapped() {
-        print("Tap recover")
+        dismiss(animated: true)
     }
 }
 
